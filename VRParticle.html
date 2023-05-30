@@ -24,6 +24,7 @@
     <script src="https://unpkg.com/earcut@latest/dist/earcut.min.js"></script>
     <script src="https://cdn.babylonjs.com/loaders/babylonjs.loaders.min.js"></script>
     <script src="https://cdn.babylonjs.com/gui/babylon.gui.min.js"></script>
+    <script src="babylon.gridMaterial.js"></script>
 
   </head>
   <body>
@@ -35,42 +36,103 @@
 
       const engine = new BABYLON.Engine(canvas, true, null, true);
 
-    var createScene = async function() {
+      function createScene() {
+        const scene = new BABYLON.Scene(engine);
 
-      var scene = new BABYLON.Scene(engine);
-      var camera = new BABYLON.FreeCamera("camera1", scene);
+        const camera = new BABYLON.ArcRotateCamera("ArcRotateCamera", -Math.PI / 2, Math.PI / 2.2, 10, new BABYLON.Vector3(0, 0, 0), scene);
+        camera.attachControl(canvas, true);
+        const light = new BABYLON.HemisphericLight("light", new BABYLON.Vector3(0, 1, 0), scene);
 
-      // Ground
-      var ground = BABYLON.Mesh.CreatePlane("ground", 50.0, )
-      ground.position = new BABYLON.Vector3(0, -10, 0);
-      ground.rotation = new BABYLON.Vector3(Math.PI / 2, 0, 0);
+        // Ground
+        const ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 25, height: 25});
+        ground.material = new BABYLON.GridMaterial("groundMat");
+        ground.material.backFaceCulling = false;
 
-      ground.material = new BABYLON.StandardMaterial("groundMat", scene);
-      ground.material.backFaceCulling = false;
-      ground.material.diffuseColor = new BABYLON.Color3(0.3, 0.3, 1);
+        // Particle enemy delete
+        const particleSystem = new BABYLON.ParticleSystem("particles", 2000);
 
+        particleSystem.particleTexture = new BABYLON.Texture("textures/flare.png");
 
-      // Particle
-      var particleSystem = new BABYLON.ParticleSystem("particles", 2000, scene);
+        particleSystem.emitter = new BABYLON.Vector3(0, 0.5, 0);
+        particleSystem.minSize = 0.05;
+        particleSystem.maxSize = 0.75;
+        particleSystem.stop();
 
-      particleSystem.particleTexture = new BABYLON.Texture("textures/flare.png", scene);
+        // Particle Fire
+        var hdrTexture = BABYLON.CubeTexture.CreateFromPrefilteredData("/textures/Runyon_Canyon_A_2k_cube_specular.dds", scene);
+        scene.environmentTexture = hdrTexture;
 
-      
+        // Set up new rendering pipeline
+        var pipeline = new BABYLON.DefaultRenderingPipeline("default", true, scene);
 
+        // Tone mapping
+        scene.imageProcessingConfiguration.toneMappingEnabled = true;
+        scene.imageProcessingConfiguration.toneMappingType = BABYLON.ImageProcessingConfiguration.TONEMAPPING_ACES;
+        scene.imageProcessingConfiguration.exposure = 1;
 
-      // XR
+        // Bloom
+        pipeline.bloomEnabled = true;
+        pipeline.bloomThreshold = 0.8;
+        pipeline.bloomWeight = 1;
+        pipeline.bloomKernel = 4;
+        pipeline.bloomScale = 0.5;
 
-        const env = scene.createDefaultEnvironment();
-
-        const xr = await scene.createDefaultXRExperienceAsync({
-          floorMeshes: [env.ground]
+        // Fire
+        BABYLON.ParticleHelper.CreateAsync("fire", scene).then((set) => {
+            set.start();
         });
 
-        return scene;
-        
-    };
+        // // thunder
+        // const thunder = new BABYLON.ParticleSystem("lightningParticles", 1000, scene);
+        // thunder.particleTexture = new BABYLON.Texture("textures/lightning_particle.png", scene); // パーティクルのテクスチャ（適切なパスを指定してください）
+        // thunder.emitter = new BABYLON.Vector3(0, 3, 0); // パーティクルの発生元位置
+        // thunder.minSize = 0.1; // パーティクルの最小サイズ
+        // thunder.maxSize = 0.5; // パーティクルの最大サイズ
+        // thunder.color1 = new BABYLON.Color4(1.0, 1.0, 1.0, 1.0); // パーティクルの色
+        // thunder.minEmitPower = 0.1; // パーティクルの最小発生力
+        // thunder.maxEmitPower = 0.5; // パーティクルの最大発生力
+        // thunder.emitRate = 500; // パーティクルの発生率
+        // thunder.minLifeTime = 0.1; // パーティクルの最小寿命
+        // thunder.maxLifeTime = 0.5; // パーティクルの最大寿命
+        // thunder.blendMode = BABYLON.thunder.BLENDMODE_ADD;
+        // thunder.gravity = new BABYLON.Vector3(0, -1, 0); // パーティクルに重力を設定
+        // thunder.direction1 = new BABYLON.Vector3(-1, -1, -1); // パーティクルの方向1
+        // thunder.direction2 = new BABYLON.Vector3(1, -1, 1); // パーティクルの方向2
+        // thunder.start();
 
-        const scene = createScene();
+
+
+        BABYLON.SceneLoader.ImportMesh("", "models/", "slime.glb", scene, function (meshes) {
+          const enemyMesh = meshes[2];
+
+          // スペースキーの入力を監視し、パーティクルの表示を切り替える
+          let isSpacePressed = false;
+          window.addEventListener("keydown", function (event) {
+            if (event.keyCode === 32) {
+              isSpacePressed = true;
+              particleSystem.start();
+              enemyMesh.isVisible = false;
+            }
+          });
+          window.addEventListener("keyup", function (event) {
+            if (event.keyCode === 32) {
+              isSpacePressed = false;
+              particleSystem.stop();
+            }
+          });
+        });
+
+        // XR
+
+        // const env = scene.createDefaultEnvironment();
+        // const xr = scene.createDefaultXRExperienceAsync({
+        //   floorMeshes: [env.ground]
+        // });
+
+        return scene;
+      }
+
+      const scene = createScene();
 
       engine.runRenderLoop(function () {
         scene.render();
