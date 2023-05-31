@@ -75,35 +75,35 @@
         pipeline.bloomThreshold = 0.8;
         pipeline.bloomWeight = 1;
         pipeline.bloomKernel = 4;
-        pipeline.bloomScale = 0.5;
+        pipeline.bloomScale = 0.1;
 
         // Fire
-        BABYLON.ParticleHelper.CreateAsync("fire", scene).then((set) => {
-            set.start();
-        });
+        // BABYLON.ParticleHelper.CreateAsync("fire", scene).then((set) => {
+        //     set.start();
+        // });
 
         // // thunder
-        // const thunder = new BABYLON.ParticleSystem("lightningParticles", 1000, scene);
-        // thunder.particleTexture = new BABYLON.Texture("textures/lightning_particle.png", scene); // パーティクルのテクスチャ（適切なパスを指定してください）
-        // thunder.emitter = new BABYLON.Vector3(0, 3, 0); // パーティクルの発生元位置
-        // thunder.minSize = 0.1; // パーティクルの最小サイズ
-        // thunder.maxSize = 0.5; // パーティクルの最大サイズ
-        // thunder.color1 = new BABYLON.Color4(1.0, 1.0, 1.0, 1.0); // パーティクルの色
-        // thunder.minEmitPower = 0.1; // パーティクルの最小発生力
-        // thunder.maxEmitPower = 0.5; // パーティクルの最大発生力
-        // thunder.emitRate = 500; // パーティクルの発生率
-        // thunder.minLifeTime = 0.1; // パーティクルの最小寿命
-        // thunder.maxLifeTime = 0.5; // パーティクルの最大寿命
-        // thunder.blendMode = BABYLON.thunder.BLENDMODE_ADD;
-        // thunder.gravity = new BABYLON.Vector3(0, -1, 0); // パーティクルに重力を設定
-        // thunder.direction1 = new BABYLON.Vector3(-1, -1, -1); // パーティクルの方向1
-        // thunder.direction2 = new BABYLON.Vector3(1, -1, 1); // パーティクルの方向2
-        // thunder.start();
+        const thunder = new BABYLON.ParticleSystem("lightningParticles", 1000, scene);
+        thunder.particleTexture = new BABYLON.Texture("textures/lightning_particle.png", scene); // パーティクルのテクスチャ（適切なパスを指定してください）
+        thunder.emitter = new BABYLON.Vector3(0, 3, 0); // パーティクルの発生元位置
+        thunder.minSize = 0.1; // パーティクルの最小サイズ
+        thunder.maxSize = 0.5; // パーティクルの最大サイズ
+        thunder.color1 = new BABYLON.Color4(1.0, 1.0, 1.0, 1.0); // パーティクルの色
+        thunder.minEmitPower = 0.1; // パーティクルの最小発生力
+        thunder.maxEmitPower = 0.5; // パーティクルの最大発生力
+        thunder.emitRate = 500; // パーティクルの発生率
+        thunder.minLifeTime = 0.1; // パーティクルの最小寿命
+        thunder.maxLifeTime = 0.5; // パーティクルの最大寿命
+        thunder.blendMode = BABYLON.ParticleSystem.BLENDMODE_ADD;
+        thunder.gravity = new BABYLON.Vector3(0, -1, 0); // パーティクルに重力を設定
+        thunder.direction1 = new BABYLON.Vector3(-1, -1, -1); // パーティクルの方向1
+        thunder.direction2 = new BABYLON.Vector3(1, -1, 1); // パーティクルの方向2
+        thunder.start();
 
 
 
         BABYLON.SceneLoader.ImportMesh("", "models/", "slime.glb", scene, function (meshes) {
-          const enemyMesh = meshes[2];
+          const enemyMesh = meshes[0];
 
           // スペースキーの入力を監視し、パーティクルの表示を切り替える
           let isSpacePressed = false;
@@ -111,7 +111,7 @@
             if (event.keyCode === 32) {
               isSpacePressed = true;
               particleSystem.start();
-              enemyMesh.isVisible = false;
+              enemyMesh.setEnabled(false);
             }
           });
           window.addEventListener("keyup", function (event) {
