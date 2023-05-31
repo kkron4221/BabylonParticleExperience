@@ -82,7 +82,7 @@
         //     set.start();
         // });
 
-        // // thunder
+        // thunder
         const thunder = new BABYLON.ParticleSystem("lightningParticles", 1000, scene);
         thunder.particleTexture = new BABYLON.Texture("textures/lightning_particle.png", scene); // パーティクルのテクスチャ（適切なパスを指定してください）
         thunder.emitter = new BABYLON.Vector3(0, 3, 0); // パーティクルの発生元位置
@@ -100,7 +100,18 @@
         thunder.direction2 = new BABYLON.Vector3(1, -1, 1); // パーティクルの方向2
         thunder.start();
 
-
+        // ice
+        const ice = new BABYLON.ParticleSystem("ice", 1000, scene);
+        ice.particleTexture = new BABYLON.Texture("textures/ice_particle.png", scene);
+        ice.emitter = new BABYLON.Vector3(0, 1, 0);
+        ice.mixSize = 0.1;
+        ice.maxSize = 0.5;
+        ice.color1 = new BABYLON.Color4(1.0, 1.0, 1.0, 1.0);
+        ice.minEmitPower = 0.1;
+        ice.maxEmitPower = 0.5;
+        ice.gravity = new BABYLON.Vector3(0, 0, 0);
+        ice.blendMode = BABYLON.ParticleSystem.BABYLON_ADD;
+        ice.start();
 
         BABYLON.SceneLoader.ImportMesh("", "models/", "slime.glb", scene, function (meshes) {
           const enemyMesh = meshes[0];
