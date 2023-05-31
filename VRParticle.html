@@ -113,6 +113,20 @@
         ice.blendMode = BABYLON.ParticleSystem.BABYLON_ADD;
         ice.start();
 
+        BABYLON.SceneLoader.ImportMesh("", "models/", "boxsingglobe.glb", scene, function (meshes){
+          const boxsingglobe = meshes[0];
+        });
+
+        BABYLON.SceneLoader.ImportMesh("", "models/", "hummer.glb", scene, function (meshes){
+          const hummer = meshes[0];
+        });
+
+        BABYLON.SceneLoader.ImportMesh("", "models/", "sword.glb", scene, function (meshes){
+          const sword = meshes[0];
+        });
+
+
+
         BABYLON.SceneLoader.ImportMesh("", "models/", "slime.glb", scene, function (meshes) {
           const enemyMesh = meshes[0];
 
