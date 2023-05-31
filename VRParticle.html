@@ -115,14 +115,17 @@
 
         BABYLON.SceneLoader.ImportMesh("", "models/", "boxsingglobe.glb", scene, function (meshes){
           const boxsingglobe = meshes[0];
+          boxsingglobe.position = new BABYLON.Vector3(0, 5, 3);
         });
 
         BABYLON.SceneLoader.ImportMesh("", "models/", "hummer.glb", scene, function (meshes){
           const hummer = meshes[0];
+          hummer.position = new BABYLON.Vector3(-2, 3, 5);
         });
 
         BABYLON.SceneLoader.ImportMesh("", "models/", "sword.glb", scene, function (meshes){
           const sword = meshes[0];
+          sword.position = new BABYLON.Vector3(2, 3, 5);
         });
 
 
