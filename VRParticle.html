@@ -115,7 +115,16 @@
 
         BABYLON.SceneLoader.ImportMesh("", "models/", "boxsingglobe.glb", scene, function (meshes){
           const boxsingglobe = meshes[0];
-          boxsingglobe.position = new BABYLON.Vector3(0, 5, 3);
+  boxsingglobe.position = new BABYLON.Vector3(0, 5, 0);
+  boxsingglobe.collisionEnabled = true;
+  scene.enablePhysics(new BABYLON.Vector3(0, -9.81, 0), new BABYLON.CannonJSPlugin());
+          boxsingglobe.physicsImpostor = new BABYLON.PhysicsImpostor(
+            boxsingglobe, BABYLON.PhysicsImpostor.BoxImpostor, { mass: 1 }, scene
+          );
+
+          // y軸方向の速度をマイナスに設定して自由落下させます
+          const impulse = new BABYLON.Vector3(0, 5, 0); // マイナス方向に速度を設定
+          boxsingglobe.physicsImpostor.applyImpulse(impulse, boxsingglobe.getAbsolutePosition());
         });
 
         BABYLON.SceneLoader.ImportMesh("", "models/", "hummer.glb", scene, function (meshes){
@@ -132,6 +141,7 @@
 
         BABYLON.SceneLoader.ImportMesh("", "models/", "slime.glb", scene, function (meshes) {
           const enemyMesh = meshes[0];
+          enemyMesh.position = new BABYLON.Vector3(0, 0, 0);
 
           // スペースキーの入力を監視し、パーティクルの表示を切り替える
           let isSpacePressed = false;
